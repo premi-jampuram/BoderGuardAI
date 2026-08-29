@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model PersonRecord {
+  id             String   @id @default(cuid())
+  fullName       String
+  documentType   String
+  documentNumber String   @unique
+  nationality    String
+  dateOfBirth    DateTime
+  dateOfExpiry   DateTime
+  dateOfIssue    DateTime
+  gender         String
+  status         String   @default("ACTIVE")
+  aliasOf        String?
+  createdAt      DateTime @default(now())
+
+  @@index([documentNumber])
+}
+
+model BlacklistEntry {
+  id             String   @id @default(cuid())
+  documentNumber String   @unique
+  fullName       String
+  reason         String
+  severity       String   @default("HIGH")
+  source         String   @default("National Watchlist")
+  createdAt      DateTime @default(now())
+}
+
+model VerificationLog {
+  id                   String   @id @default(cuid())
+  documentType         String
+  extractedData        String
+  mrzRaw               String?
+  validationResult     String
+  tamperingResult      String
+  faceMatchResult      String?
+  portraitQualityResult String?
+  livenessResult       String?
+  databaseMatch        String?
+  riskBreakdown        String   @default("[]")
+  riskScore            Int
+  riskLevel            String
+  decision             String
+  createdAt            DateTime @default(now())
+}
